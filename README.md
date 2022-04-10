@@ -1,0 +1,1 @@
+It's a little program that visualizes the difference between two string.
