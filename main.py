@@ -23,7 +23,7 @@ def GetEditorialPrescription(str1, str2):
     while (i > 0) or (j > 0):
         _min = i + j
         pos = (0, 0)
-        action = '_'
+        action = None
         if (i > 0):
             _min = D[i-1][j]
             pos = (i-1, j)
@@ -42,10 +42,32 @@ def GetEditorialPrescription(str1, str2):
         result = [action] + result
     return result
 
+def CharTypeGenerator(actions, skipPredicate, bracketsPredicate):
+    for action in actions:
+        if skipPredicate(action):
+            continue
+        yield bracketsPredicate(action)
+
+def PrintWithBrackets(value, charTypeGenerator):
+    brackets = False
+    for c in value:
+        if next(charTypeGenerator) != brackets:
+            brackets = not brackets
+            print('[' if brackets else ']',end="")
+        print(c, end="")
+    if brackets:
+        print(']',end="")
+    print()
+
 def Main():
-    str1 = input()
-    str2 = input()
-    print(GetEditorialPrescription(str1, str2))
+    while True:
+        str1 = input("1:")
+        str2 = input("2:")
+        actions = GetEditorialPrescription(str1, str2)
+        print(">>", end="")
+        PrintWithBrackets(str1, CharTypeGenerator(actions, lambda x: x == Actions.Insert, lambda x: (x == Actions.Delete) or (x == Actions.Replace)))
+        print(">>", end="")
+        PrintWithBrackets(str2, CharTypeGenerator(actions, lambda x: x == Actions.Delete, lambda x: (x == Actions.Insert) or (x == Actions.Replace)))
 
 if __name__ == '__main__':
     try:
